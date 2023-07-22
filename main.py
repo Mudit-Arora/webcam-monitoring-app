@@ -1,7 +1,7 @@
 import cv2
 # collaborate with numpy library
 import time
-from email import send_email
+from emailing import send_email
 import glob # module to return specific file path
 
 # main camera
@@ -61,7 +61,7 @@ while True:
 
     # checking if the object has left the frame or not
     if status_list[0] == 1 and status_list[1] == 0:
-        send_email()
+        send_email(image_with_object)
     print(status_list)
 
     cv2.imshow("Video", frame)
