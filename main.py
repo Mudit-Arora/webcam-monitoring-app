@@ -1,6 +1,7 @@
 import cv2
 # collaborate with numpy library
 import time
+from email import send_email
 
 # main camera
 video = cv2.VideoCapture(0)
@@ -8,9 +9,11 @@ time.sleep(1)
 
 # making first frame (original)
 first_frame = None
+status_list = []
 
 # iterations until program breaks
 while True:
+    status = 0 # when there is no object in frame
     check, frame = video.read() # matrix
     # checking to gray frame to reduce data
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -35,11 +38,23 @@ while True:
     contours, check = cv2.findContours(dil_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     for contour in contours:
+        # checking if there is an object in the area
         if cv2.contourArea(contour) < 2000:
             continue
         x, y, w, h = cv2.boundingRect(contour)
         # making a rectangle of green color around the object
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
+        rectangle = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
+        if rectangle.any():
+            status = 1 # when there is object in frame
+            send_email()
+
+    status_list.append(status)
+    status_list = status_list[-2:] # last two items from the list
+
+    # checking if the object has left the frame or not
+    if status_list[0] == 1 and status_list[1] == 0:
+        send_email()
+    print(status_list)
 
     cv2.imshow("Video", frame)
     key = cv2.waitKey(1)
