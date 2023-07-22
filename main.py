@@ -2,7 +2,8 @@ import cv2
 # collaborate with numpy library
 import time
 from emailing import send_email
-import glob # module to return specific file path
+import glob  # module to return specific file path
+import os
 
 # main camera
 video = cv2.VideoCapture(0)
@@ -12,6 +13,12 @@ time.sleep(1)
 first_frame = None
 status_list = []
 count = 1
+
+# function to remove all the previous images from the folder after running the program
+def clean_folder():
+    images = glob.glob("images/*.png")
+    for image in images:
+        os.remove(image)
 
 # iterations until program breaks
 while True:
@@ -62,6 +69,8 @@ while True:
     # checking if the object has left the frame or not
     if status_list[0] == 1 and status_list[1] == 0:
         send_email(image_with_object)
+        clean_folder()
+
     print(status_list)
 
     cv2.imshow("Video", frame)
