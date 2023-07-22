@@ -24,5 +24,5 @@ def send_email(image_path):
     gmail.quit()
 
 # checking
-if __name__ == "__main__":
-    send_email(image_path="images/image11.png")
+""" if __name__ == "__main__":
+    send_email(image_path="images/image11.png")"""

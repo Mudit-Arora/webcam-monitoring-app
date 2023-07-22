@@ -4,6 +4,7 @@ import time
 from emailing import send_email
 import glob  # module to return specific file path
 import os
+from threading import Thread
 
 # main camera
 video = cv2.VideoCapture(0)
@@ -68,8 +69,14 @@ while True:
 
     # checking if the object has left the frame or not
     if status_list[0] == 1 and status_list[1] == 0:
-        send_email(image_with_object)
-        clean_folder()
+        email_thread = Thread(target=send_email, args=(image_with_object, ))
+        email_thread.daemon = True
+        # send_email(image_with_object)
+        clean_thread = Thread(target=clean_folder)
+        email_thread.daemon = True
+        # clean_folder()
+        email_thread.start()
+        clean_thread.start()
 
     print(status_list)
 
