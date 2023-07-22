@@ -2,6 +2,7 @@ import cv2
 # collaborate with numpy library
 import time
 from email import send_email
+import glob # module to return specific file path
 
 # main camera
 video = cv2.VideoCapture(0)
@@ -10,6 +11,7 @@ time.sleep(1)
 # making first frame (original)
 first_frame = None
 status_list = []
+count = 1
 
 # iterations until program breaks
 while True:
@@ -46,7 +48,13 @@ while True:
         rectangle = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 3)
         if rectangle.any():
             status = 1 # when there is object in frame
-            send_email()
+            # saving image at 30fps
+            cv2.imwrite(f"images/image{count}.png", frame)
+            count = count + 1  # iterating after every loop
+            # choosing the middle image
+            all_images = glob.glob("images/*.png")
+            index = int(len(all_images) / 2)
+            image_with_object = all_images[index]
 
     status_list.append(status)
     status_list = status_list[-2:] # last two items from the list
